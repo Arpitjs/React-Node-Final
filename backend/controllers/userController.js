@@ -27,10 +27,10 @@ export const register = async (req, res, next) => {
     const newUser = {};
     await mapUsers(newUser, req.body);
     const user = await User.create(newUser);
-    res.status(200).json({ data: user });
+    res.status(200).json({ user });
   } catch (e) {
     if (e.code === 11000)
-      return next("Duplicate data. Please try with another one");
+      return next({ msg: "Duplicate data. Please try with another one"});
     next(e);
   }
 };
