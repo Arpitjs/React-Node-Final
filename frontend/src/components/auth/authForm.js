@@ -1,6 +1,6 @@
 import { Form, Input, Button, Checkbox } from "antd";
 
-const AuthForm = ({ onFinish, onFinishFailed, operation }) => {
+const AuthForm = ({ onFinish, onFinishFailed, operation, submitting }) => {
   const info = {
     display: "flex",
     justifyContent: "center",
@@ -71,9 +71,10 @@ const AuthForm = ({ onFinish, onFinishFailed, operation }) => {
           }}
         >
           <Button type="primary" htmlType="submit">
-            Submit
+            { submitting ? 'Submitting' : 'Submit' }
           </Button>
         </Form.Item>
+        
       </Form>
     </>
   );

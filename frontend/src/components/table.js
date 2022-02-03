@@ -1,6 +1,7 @@
 import { Table } from "antd";
 import { useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import Nav from './nav';
 
 const TableComponent = () => {
   const [data, setData] = useState([
@@ -71,7 +72,12 @@ const TableComponent = () => {
   function handleDelete(val) {
     setData(data.filter((el) => el.key !== val.key));
   }
-  return <Table columns={columns} dataSource={data} pagination={false} />;
+  return (
+    <>
+    <Nav/>
+  <Table columns={columns} dataSource={data} pagination={false} />
+  </>
+  );
 };
 
 export default TableComponent;
