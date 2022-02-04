@@ -18,7 +18,7 @@ export const mapContacts = function (obj1, obj2) {
   if (obj2.country) {
     obj1.country = obj2.country;
   }
-  if (obj2.married) {
-    obj1.married = obj2.married;
+  if (obj2.gender) {
+    obj1.gender = obj2.gender;
   }
 };

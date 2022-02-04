@@ -8,7 +8,9 @@ import Login from './components/auth/login';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import Auth from './components/auth/authRoute';
-import Create from './components/contacts/create';
+// import Create from './components/contacts/create';
+import EditContact from './components/contacts/editContact';
+import CreateContact from './components/contacts/createContact';
 
 function App() {
   return (
@@ -24,7 +26,8 @@ function App() {
       
       <Route element={<Auth />}>
       <Route path="/contacts" element={<TableComponent />}/>
-      <Route path="/create" element={<Create />} />
+      <Route path="/create" element={<CreateContact />} />
+      <Route path='/edit/:slug' element={<EditContact />} />
       </Route>
 
       </Routes>

@@ -25,7 +25,10 @@ const contactSchema = new Schema({
         type: String,
         trim: true
     },
-    married: Boolean,
+    gender: {
+        type: String,
+        enum: ['male','female', 'prefer not to say']
+    },
     slug: {
         type: String,
         unique: true

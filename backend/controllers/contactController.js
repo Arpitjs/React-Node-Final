@@ -17,11 +17,11 @@ export const createContact = async (req, res, next) => {
     // console.log(req.body);
     const newContact = {};
     let iData;
-    if(req.body.image && req.body.image.length) {
-        iData = req.body.image[0].thumbUrl;
-    } else if(req.body.dragger && req.body.dragger.length) {
+    if (req.body.image && req.body.image.length) {
+      iData = req.body.image[0].thumbUrl;
+    } else if (req.body.dragger && req.body.dragger.length) {
       iData = req.body.dragger[0].tempFilePath;
-    } 
+    }
     const imageData = await uploadImage(iData);
 
     newContact.image = imageData;
@@ -51,8 +51,11 @@ export const editContact = async (req, res, next) => {
     if (!contact)
       return res.status(400).json({ msg: "No such contact found." });
     const toEdit = {};
-    const imageData = await uploadImage(req.files.image.tempFilePath);
-    toEdit.image = imageData;
+    if (req.body.image) {
+      let iData = req.body.image[0].thumbUrl;
+      const imageData = await uploadImage(iData);
+      toEdit.image = imageData;
+    }
     req.body.email = req.user.email;
     mapContacts(toEdit, req.body);
     const updatedContact = await Contact.findOneAndUpdate({ slug }, toEdit, {
