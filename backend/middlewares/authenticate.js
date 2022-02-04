@@ -2,7 +2,7 @@ import * as jwt from "jsonwebtoken";
 import User from "../models/userModel";
 
 const signAccessToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: 20 });
+  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 const signRefreshToken = (id) =>
   jwt.sign({ id }, process.env.REFRESH_TOKEN, { expiresIn: "7d" });
 

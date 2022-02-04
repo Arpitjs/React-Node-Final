@@ -16,14 +16,16 @@ const contactSchema = new Schema({
     },
     email: {
         type: String,
-        unique: true,
         trim: true
+    },
+    country: {
+        type: String
     },
     address: {
         type: String,
-        unique: true,
         trim: true
     },
+    married: Boolean,
     slug: {
         type: String,
         unique: true

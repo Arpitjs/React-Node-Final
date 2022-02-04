@@ -23,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', userRoutes);
 app.use('/api/contact', contactRoutes);
 
+
 /* error handling middleware */
 app.use((err, req, res, next) => {
     console.log(err);

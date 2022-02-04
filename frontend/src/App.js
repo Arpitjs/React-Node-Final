@@ -20,6 +20,8 @@ function App() {
       <Route path="/register" element={<Register />}/>
       <Route path="/login" element={<Login />}/>
 
+      { /* protected routes */}
+      
       <Route element={<Auth />}>
       <Route path="/contacts" element={<TableComponent />}/>
       <Route path="/create" element={<Create />} />

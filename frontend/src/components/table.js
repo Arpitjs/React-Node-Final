@@ -1,105 +1,113 @@
 import { Table } from "antd";
-import { useState } from "react";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { DeleteOutlined, EditOutlined, HeartOutlined } from "@ant-design/icons";
 import Nav from './nav';
+import axios from 'axios';
+import { toast } from "react-toastify";
+import { getData } from "../utils/localStorage";
 
 const TableComponent = () => {
-  const [data, setData] = useState([
-    {
-      key: 1,
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Uniform_Resource_Locator.svg/220px-Uniform_Resource_Locator.svg.png",
-    },
-    {
-      key: 2,
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Uniform_Resource_Locator.svg/220px-Uniform_Resource_Locator.svg.png",
-    },
-    {
-      key: 3,
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Uniform_Resource_Locator.svg/220px-Uniform_Resource_Locator.svg.png",
-    },
-  ]);
+  const [authToken, setAuthToken] = useState('');
+  const [contacts, setContacts] = useState([{
+    name: "",
+    address: "",
+    image: "",
+    phone: "",
+    country: "",
+    married: ""
+  }]);
+ 
+  useEffect(() => {
+    const { token } = getData('user');
+    setAuthToken(token);
+    fetchData();
+  }, [authToken]);
+
+  const fetchData = async () => {
+    try {
+      if(authToken) {
+        const { data } = await axios.get('http://localhost:4200/api/contact', {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+      setContacts(data.allContacts);
+      }
+    } catch (e) {
+      console.log(e);
+      toast(e.response.data.err.msg);
+    }
+  }
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Image",
+      width: "15px",
+      align: 'center',
+      key: 'image',
+      dataIndex: "image",
+      render: (image) => (
+          <img src={image ? image.url : '../public/default.jpg' } />
+      ),
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "Name",
+      dataIndex: "name",
+      align: 'center',
+      key: 'name'
+
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      width: "15px",
+      align: 'center',
+      key: 'email'
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      align: 'center',
+      key: 'phone'
     },
     {
       title: "Address",
       dataIndex: "address",
-      key: "address",
+      align: 'center',
+      key: 'address'
+    },
+    {
+      title: "Favorite",
+      align: 'center',
+      key: 'favorite',
+      render: () => <HeartOutlined />,
     },
 
     {
-      title: "Image",
-      key: "image",
-      dataIndex: "image",
-      render: (image) => (
-          <img src={image} />
-      ),
-    },
-    {
       title: "Delete",
+      align: 'center',
+      key: 'delete',
       render: (val) => <DeleteOutlined onClick={() => handleDelete(val)} />,
     },
     {
       title: "Edit",
+      align: 'center',
+      key: 'edit',
       render: () => <EditOutlined />,
-    },
+    }
   ];
 
   function handleDelete(val) {
-    setData(data.filter((el) => el.key !== val.key));
+    setContacts(contacts.filter((el) => el._id !== val._id));
   }
   return (
     <>
     <Nav/>
-  <Table columns={columns} dataSource={data} pagination={false} />
+  <Table columns={columns} dataSource={contacts} pagination={false} rowKey={contacts => contacts._id}/>
   </>
   );
 };
 
 export default TableComponent;
 
-// {
-//   title: 'Tags',
-//   key: 'tags',
-//   dataIndex: 'tags',
-//   render: tags => (
-//     <>
-//       {
-//       tags.map(tag => {
-//         let color = tag.length > 5 ? 'geekblue' : 'green';
-//         if (tag === 'loser') {
-//           color = 'volcano';
-//         }
-//         return (
-//           <Tag color={color} key={tag}>
-//             {tag.toUpperCase()}
-//           </Tag>
-//         );
-//       })}
-//     </>
-//   ),
-// },
+

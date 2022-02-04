@@ -8,15 +8,17 @@ export const mapContacts = function (obj1, obj2) {
     obj1.name = obj2.name;
     obj1.slug = slugify(obj2.name);
   }
-
-  if (obj2.photo) {
-    obj1.photo = obj2.photo;
-  }
   if (obj2.address) {
     obj1.address = obj2.address;
   }
 
   if (obj2.phone) {
     obj1.phone = obj2.phone;
+  }
+  if (obj2.country) {
+    obj1.country = obj2.country;
+  }
+  if (obj2.married) {
+    obj1.married = obj2.married;
   }
 };

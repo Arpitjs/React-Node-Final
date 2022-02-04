@@ -4,30 +4,29 @@ import AuthForm from "./authForm";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setData } from "../../utils/localStorage";
+import {parseName} from "../../utils/parseName";
 
 const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const onFinish = async (values) => {
     try {
       setSubmitting(true);
       const { data } = await axios.post("http://localhost:4200/login", values);
       setSubmitting(false);
+      setData('user', data);
       dispatch({
         type: 'LOGGED_IN_USER',
         payload: {
-          email: data.user.email,
-          token: data.token
+          email: data.user.email
         }
       })
       toast.success( 
-        `Login successful! Welcome ${data.user.email.split("@")[0]}`
+        `Login successful! Welcome ${parseName(data.user.email)}`
       );
-      setTimeout(() => {
-        navigate("/contacts");
-      }, 3000);
+      setTimeout(() => navigate("/contacts"), 3000);
       
     } catch (e) {
       console.log(e.response.data);

@@ -8,12 +8,10 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return next({ msg: "Invalid credentials." });
-    /* password decrypt process */
     const decrypted = await decryptPassword(user.password);
     if (password !== decrypted)
       return next({ msg: "Invalid credentials." });
     
- /* token generation process */
   const token = signAccessToken(user._id);
   const refreshToken = signRefreshToken(user._id);
    res.status(200).json({ user, token, refreshToken });

@@ -1,9 +1,9 @@
 import { Outlet, Navigate } from "react-router-dom";
-import  { useSelector } from 'react-redux';
+import { getData } from "../../utils/localStorage";
 
 const Auth = () => {
-const data = useSelector(state => state.auth);
-  return data ? <Outlet /> : <Navigate to="/login" />;
+  const result = getData('user');
+    return result && result.token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default Auth;
