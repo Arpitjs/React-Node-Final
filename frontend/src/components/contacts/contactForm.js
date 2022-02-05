@@ -1,4 +1,10 @@
 import { Form, Select, Input, Radio, Button, Upload } from "antd";
+import { InputNumber } from "antd";
+import {
+  MobileOutlined,
+  HomeOutlined,
+  BankOutlined
+} from "@ant-design/icons";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -10,11 +16,18 @@ const { Option } = Select;
 
 const wrapper = { margin: "50px 0px 0px 300px" };
 const info = { margin: "10px 0px 20px 300px" };
+const icons = { marginRight: '20px '};
+const contact = { margin: "10px 20px 20px 260px" };
 
 const ContactForm = ({ slug, method, operation, validate }) => {
+
   const [authToken, setAuthToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [countries, setCountries] = useState([]);
+  const [mobile, setMobile] = useState('');
+  const [home, setHome] = useState('');
+  const [work, setWork] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,12 +69,13 @@ const ContactForm = ({ slug, method, operation, validate }) => {
       method === "post"
         ? (url = "http://localhost:4200/api/contact")
         : (url = `http://localhost:4200/api/contact/${slug}`);
+
       if (authToken) {
         setSubmitting(true);
         await axios({
           method,
           url,
-          data: values,
+          data: { ...values, mobile, work, home },
           headers: { Authorization: `Bearer ${authToken}` },
         });
 
@@ -100,7 +114,6 @@ const ContactForm = ({ slug, method, operation, validate }) => {
         >
           <Input />
         </Form.Item>
-
         <Form.Item
           label="Email"
           name="email"
@@ -108,19 +121,6 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             {
               required: validate ? true : false,
               message: validate ? "Please input your email!" : "",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="Phone"
-          name="phone"
-          rules={[
-            {
-              required: validate ? true : false,
-              message: validate ? "Please input your phone!" : "",
             },
           ]}
         >
@@ -159,7 +159,6 @@ const ContactForm = ({ slug, method, operation, validate }) => {
         >
           <Input />
         </Form.Item>
-
         <Form.Item name="gender" label="Gender">
           <Radio.Group>
             <Radio value="male">Male</Radio>
@@ -167,6 +166,13 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             <Radio value="prefer not to say">Prefer not to say</Radio>
           </Radio.Group>
         </Form.Item>
+
+        <div style={{display: 'flex', marginBottom: '20px' }}>
+          <p style={contact}>Contact Numbers: </p>
+          <InputNumber addonBefore={<MobileOutlined />} style={icons} placeholder="Mobile Number" name="mobile" onChange={(val) => setMobile(val)}/>
+          <InputNumber addonBefore={<HomeOutlined />} style={icons} placeholder="Home Number" name="home" onChange={(val) => setHome(val)}/>
+          <InputNumber addonBefore={<BankOutlined />} style={icons} placeholder="Work Number" name="work" onChange={(val) => setWork(val)}/>
+        </div>
 
         <Form.Item
           name="image"
@@ -178,28 +184,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             <Button icon={<UploadOutlined />}>Click to upload</Button>
           </Upload>
         </Form.Item>
-
-        {/* <Form.Item label="Dragger">
-        <Form.Item
-          name="dragger"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-          noStyle
-        >
-          <Upload.Dragger name="files">
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">
-              Click or drag file to this area to upload
-            </p>
-            <p className="ant-upload-hint">
-              Support for a single or bulk upload.
-            </p>
-          </Upload.Dragger>
-        </Form.Item>
-      </Form.Item> */}
-
+      
         <Form.Item
           wrapperCol={{
             span: 12,
@@ -211,7 +196,9 @@ const ContactForm = ({ slug, method, operation, validate }) => {
           </Button>
         </Form.Item>
       </Form>
-      <Button type="link" onClick={() => navigate('/contacts')}>Go Back</Button>
+      <Button type="link" onClick={() => navigate("/contacts")}>
+        Go Back
+      </Button>
     </div>
   );
 };

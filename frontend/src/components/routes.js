@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { getData } from "../../utils/localStorage";
+import { getData } from "../utils/localStorage";
 
 const Auth = () => {
   const result = getData('user');

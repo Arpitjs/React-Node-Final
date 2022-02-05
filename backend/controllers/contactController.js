@@ -4,8 +4,7 @@ import uploadImage from "../utils/uploadImage";
 
 export const getContacts = async (req, res, next) => {
   try {
-    const allContacts = await Contact.find({})
-    .sort({ favorites: -1, name: 1 });
+    const allContacts = await Contact.find({}).sort({ favorites: -1, name: 1 });
     res.status(200).json({ allContacts });
   } catch (e) {
     next(e);
@@ -14,18 +13,15 @@ export const getContacts = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    // console.log(req.body);
     const newContact = {};
+
     let iData;
     if (req.body.image && req.body.image.length) {
       iData = req.body.image[0].thumbUrl;
-    } else if (req.body.dragger && req.body.dragger.length) {
-      iData = req.body.dragger[0].tempFilePath;
+      newContact.image = await uploadImage(iData);
     }
-    const imageData = await uploadImage(iData);
-
-    newContact.image = imageData;
     mapContacts(newContact, req.body);
+
     const contact = await Contact.create(newContact);
     res.status(201).json({ contact });
   } catch (e) {
@@ -46,20 +42,27 @@ export const getContact = async (req, res, next) => {
 export const editContact = async (req, res, next) => {
   try {
     const { slug } = req.params;
+    const { mobile, work, home } = req.body;
     const contact = await Contact.findOne({ slug });
     if (!contact)
       return res.status(400).json({ msg: "No such contact found." });
     const toEdit = {};
     if (req.body.image) {
       let iData = req.body.image[0].thumbUrl;
-      const imageData = await uploadImage(iData);
-      toEdit.image = imageData;
+      toEdit.image = await uploadImage(iData);
     }
     mapContacts(toEdit, req.body);
-    const updatedContact = await Contact.findOneAndUpdate({ slug }, toEdit, {
-      new: true,
-    });
-    res.status(200).json({ updatedContact });
+    delete toEdit.contactNumber;
+
+    Contact.findOneAndUpdate({ slug }, toEdit, { new: true }).then(
+      async (doc) => {
+        if (mobile) doc.contactNumber[0].mobile = mobile;
+        if (home) doc.contactNumber[0].home = home;
+        if (work) doc.contactNumber[0].work = work;
+        await doc.save();
+        res.status(200).json({ doc });
+      }
+    );
   } catch (e) {
     next(e);
   }

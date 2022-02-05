@@ -1,15 +1,19 @@
 import mongoose, { Schema } from 'mongoose';
 const { ObjectId } = Schema;
 
+const contactNumberSchema = new Schema({
+    mobile: {
+        type: Number, required: true 
+    },
+    work: { type: Number },
+    home: { type: Number }
+})
+
 const contactSchema = new Schema({
     name: {
         type: String,
         trim: true,
         minlength: 5
-    },
-    phone: {
-        type: Number,
-        required: true
     },
     image: {
         url: String,
@@ -19,6 +23,7 @@ const contactSchema = new Schema({
         type: String,
         trim: true
     },
+    contactNumber: [contactNumberSchema],
     country: {
         type: String
     },
