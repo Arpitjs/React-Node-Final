@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+const { ObjectId } = Schema;
 
 const contactSchema = new Schema({
     name: {
@@ -32,7 +33,12 @@ const contactSchema = new Schema({
     slug: {
         type: String,
         unique: true
-    }
+    },
+    favorites: [
+           {
+           type: ObjectId, ref: 'User'
+           }
+    ]
 }, {
     timestamps: true
 });

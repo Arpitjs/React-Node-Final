@@ -1,14 +1,13 @@
+import 'antd/dist/antd.css'
+import 'react-toastify/dist/ReactToastify.css';
 import Register from './components/auth/register';
 import TableComponent from './components/table';
 import {BrowserRouter, Routes, Route } from 'react-router-dom';
-import 'antd/dist/antd.css'
-import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import Login from './components/auth/login';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import Auth from './components/auth/authRoute';
-// import Create from './components/contacts/create';
 import EditContact from './components/contacts/editContact';
 import CreateContact from './components/contacts/createContact';
 

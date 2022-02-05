@@ -1,11 +1,11 @@
 import Contact from "../models/contactModel";
 import { mapContacts } from "../utils/mapContacts";
 import uploadImage from "../utils/uploadImage";
-// import formidable from 'formidable';
 
 export const getContacts = async (req, res, next) => {
   try {
-    const allContacts = await Contact.find({});
+    const allContacts = await Contact.find({})
+    .sort({ favorites: -1, name: 1 });
     res.status(200).json({ allContacts });
   } catch (e) {
     next(e);
@@ -25,7 +25,6 @@ export const createContact = async (req, res, next) => {
     const imageData = await uploadImage(iData);
 
     newContact.image = imageData;
-    req.body.email = req.user.email;
     mapContacts(newContact, req.body);
     const contact = await Contact.create(newContact);
     res.status(201).json({ contact });
@@ -56,7 +55,6 @@ export const editContact = async (req, res, next) => {
       const imageData = await uploadImage(iData);
       toEdit.image = imageData;
     }
-    req.body.email = req.user.email;
     mapContacts(toEdit, req.body);
     const updatedContact = await Contact.findOneAndUpdate({ slug }, toEdit, {
       new: true,
@@ -75,6 +73,36 @@ export const deleteContact = async (req, res, next) => {
       return res.status(400).json({ msg: "No such contact found." });
     await Contact.findOneAndDelete({ slug });
     res.status(204).json({ msg: "contact deleted." });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const favContact = async (req, res, next) => {
+  try {
+    const { slug } = req.body;
+    const contact = await Contact.findOneAndUpdate(
+      { slug },
+      { $push: { favorites: req.user._id } },
+      { new: true }
+    );
+
+    res.status(200).json({ contact });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const UnFavContact = async (req, res, next) => {
+  try {
+    const { slug } = req.body;
+    const contact = await Contact.findOneAndUpdate(
+      { slug },
+      { $pull: { favorites: req.user._id } },
+      { new: true }
+    );
+
+    res.status(200).json({ contact });
   } catch (e) {
     next(e);
   }

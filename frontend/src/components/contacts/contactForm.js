@@ -102,6 +102,19 @@ const ContactForm = ({ slug, method, operation, validate }) => {
         </Form.Item>
 
         <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            {
+              required: validate ? true : false,
+              message: validate ? "Please input your email!" : "",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
           label="Phone"
           name="phone"
           rules={[
@@ -198,6 +211,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
           </Button>
         </Form.Item>
       </Form>
+      <Button type="link" onClick={() => navigate('/contacts')}>Go Back</Button>
     </div>
   );
 };

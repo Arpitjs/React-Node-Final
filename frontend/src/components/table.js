@@ -1,40 +1,37 @@
 import { Table } from "antd";
 import { useEffect, useState } from "react";
-import { DeleteOutlined, EditOutlined, HeartOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  HeartOutlined,
+  HeartFilled,
+} from "@ant-design/icons";
 import Nav from "./nav";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { getData } from "../utils/localStorage";
 import { useNavigate } from "react-router-dom";
+import options from "../utils/options";
 
 const TableComponent = () => {
   const navigate = useNavigate();
   const [authToken, setAuthToken] = useState("");
-  const [contacts, setContacts] = useState([
-    {
-      name: "",
-      address: "",
-      image: "",
-      phone: "",
-      country: "",
-      married: "",
-    },
-  ]);
+  const [currentUser, setCurrentUser] = useState({});
+  const [contacts, setContacts] = useState([]);
+
+  const iconStyle = { fontSize: '120%'};
 
   useEffect(() => {
-    const { token } = getData("user");
+    const { token, user } = getData("user");
     setAuthToken(token);
+    setCurrentUser(user);
     fetchData();
   }, [authToken]);
 
   const fetchData = async () => {
     try {
       if (authToken) {
-        const { data } = await axios.get("http://localhost:4200/api/contact", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+        const { data } = await axios.get("http://localhost:4200/api/contact", options(authToken));
         setContacts(data.allContacts);
       }
     } catch (e) {
@@ -51,7 +48,7 @@ const TableComponent = () => {
       key: "image",
       dataIndex: "image",
       render: (image) => (
-        <img src={image ? image.url : "../public/default.jpg"} />
+        <img src={image ? image.url : "../public/default.jpg" } />
       ),
     },
     {
@@ -83,37 +80,59 @@ const TableComponent = () => {
       title: "Favorite",
       align: "center",
       key: "favorite",
-      render: () => <HeartOutlined />,
+      render: (val) =>
+        val.favorites.includes(currentUser._id)  ? (
+          <HeartFilled onClick={() => handleUnfavorite(val)} style={iconStyle}/>
+        ) : (
+          <HeartOutlined onClick={() => handleFavorite(val)} style={iconStyle}/>
+        ),
     },
 
     {
-      title: "Delete",
+      title: "Actions",
       align: "center",
-      key: "delete",
-      render: (val) => <DeleteOutlined onClick={() => handleDelete(val)} />,
-    },
-    {
-      title: "Edit",
-      align: "center",
-      key: "edit",
+      key: "actions",
       render: (val) => (
-        <EditOutlined onClick={() => navigate(`/edit/${val.slug}`)} />
+        <>
+        <DeleteOutlined onClick={() => handleDelete(val)} style={{...iconStyle, marginRight: '30px'}}/>
+        
+        <EditOutlined onClick={() => navigate(`/edit/${val.slug}`)} style={iconStyle}/>
+        </>
       ),
-    },
+    }
   ];
 
   async function handleDelete(val) {
     try {
       setContacts(contacts.filter((contact) => contact._id !== contact._id));
-      await axios.delete(`http://localhost:4200/api/contact/${val.slug}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      await axios.delete(`http://localhost:4200/api/contact/${val.slug}`, options(authToken));
       toast.success("Contact deleted successfully.");
     } catch (e) {
       console.log(e);
       toast.error(e.response.data.err.msg);
     }
   }
+
+  async function handleFavorite(val) {
+    try {
+      await axios.post("http://localhost:4200/api/contact/favorite-contact", val, options(authToken));
+      fetchData();
+      toast.success("you have favorited this contact.");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function handleUnfavorite(val) {
+    try {
+      await axios.post("http://localhost:4200/api/contact/unfavorite-contact", val, options(authToken));
+      fetchData();
+      toast.success("you have unfavorited this contact.");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <>
       <Nav />

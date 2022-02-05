@@ -1,17 +1,28 @@
 import express from "express";
-import { createContact, getContact, getContacts, editContact, deleteContact } from "../controllers/contactController";
 import { authenticate } from "../middlewares/authenticate";
-const router = new express.Router();
+import {
+  createContact,
+  getContact,
+  getContacts,
+  editContact,
+  deleteContact,
+  favContact,
+  UnFavContact,
+} from "../controllers/contactController";
 
+const router = new express.Router();
 router.use(authenticate);
 
-router.route('/')
+router.route("/")
 .get(getContacts)
 .post(createContact);
 
-router.route('/:slug')
+router.route("/:slug")
 .get(getContact)
 .put(editContact)
 .delete(deleteContact);
+
+router.post("/favorite-contact", favContact);
+router.post("/unfavorite-contact", UnFavContact);
 
 export default router;
