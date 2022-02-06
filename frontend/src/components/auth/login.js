@@ -19,7 +19,9 @@ const Login = () => {
         values
       );
       setSubmitting(false);
-      setData("user", data);
+      setData("user", data.user);
+      setData("token", data.token);
+      setData("refreshToken", data.refreshToken);
       dispatch({
         type: "LOGGED_IN_USER",
         payload: data,

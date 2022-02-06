@@ -13,6 +13,7 @@ import { getData } from "../../utils/localStorage";
 import { useNavigate } from "react-router-dom";
 import options from "../../utils/options";
 import { useDispatch, useSelector } from "react-redux";
+import { checkJWTValid } from "../../utils/newAccessToken";
 const { EXPAND_COLUMN } = Table;
 
 const TableComponent = () => {
@@ -26,10 +27,16 @@ const TableComponent = () => {
   const iconStyle = { fontSize: "120%" };
 
   useEffect(() => {
-    const { token, user } = getData("user");
-    setAuthToken(token);
+    const token = getData("token");
+    const refreshToken = getData('refreshToken');
+    const user = getData("user");
+    const tokenProcess = async () => {
+      const newAccessToken = await checkJWTValid(token, refreshToken);
+      newAccessToken ? setAuthToken(newAccessToken) : setAuthToken(token);
+    }
     setCurrentUser(user);
     fetchData();
+    tokenProcess();
   }, [authToken]);
 
   const fetchData = async () => {
@@ -176,8 +183,8 @@ const TableComponent = () => {
         val,
         options(authToken)
       );
-      // fetchData();
-      toast.success(`you have favorited ${favoritedContact.name}'s contact.`);
+      fetchData();
+      toast.success(`you have favorited this contact.`);
     } catch (e) {
       console.log(e);
     }
@@ -211,9 +218,10 @@ const TableComponent = () => {
             <Table
               bordered={true}
               columns={columns2}
-              dataSource={record.contactNumber}
               pagination={false}
               size="small"
+              dataSource={record.contactNumber}
+              rowKey={contacts => contacts._id}
             />
           ),
         }}

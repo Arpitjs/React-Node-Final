@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getData } from "../../utils/localStorage";
+import { checkJWTValid } from "../../utils/newAccessToken";
 
 const { Option } = Select;
 
@@ -27,8 +28,13 @@ const ContactForm = ({ slug, method, operation, validate }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { token } = getData("user");
-    setAuthToken(token);
+    const token = getData("token");
+    const refreshToken = getData('refreshToken');
+    const tokenProcess = async () => {
+      const newAccessToken = await checkJWTValid(token, refreshToken);
+      newAccessToken ? setAuthToken(newAccessToken) : setAuthToken(token);
+    }
+    tokenProcess();
     getAllCountries();
   }, [authToken, countries]);
 
@@ -163,7 +169,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
           </Radio.Group>
         </Form.Item>
 
-        <div style={{ margin: "0px 0px 30px 280px" }}>
+        <div style={{ margin: "0px 0px 30px 300px" }}>
           <InputNumber
             addonBefore={<MobileOutlined />}
             style={icons}

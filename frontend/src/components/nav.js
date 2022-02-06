@@ -10,7 +10,7 @@ const { SubMenu } = Menu;
 const Nav = () => {
   const [email, setEmail] = useState('');
   useEffect(() => {
-    const { user } = getData('user')
+    const user = getData('user')
     setEmail(user.email);
   }, []);
 
@@ -20,6 +20,8 @@ const Nav = () => {
   
   const handleLogout = () => {  
       removeData('user');
+      removeData('token');
+      removeData('refreshToken');
       navigate('/login');
   }
 

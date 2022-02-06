@@ -25,7 +25,7 @@ function App() {
       
       { /* protected routes */}
       
-      <Route element={<Auth />}>
+      <Route element={ <Auth />}>
       <Route path="/contacts" element={<TableComponent />}/>
       <Route path="/create" element={<CreateContact />} />
       <Route path='/edit/:slug' element={<EditContact />} />

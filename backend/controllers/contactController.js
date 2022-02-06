@@ -4,7 +4,7 @@ import uploadImage from "../utils/uploadImage";
 
 export const getContacts = async (req, res, next) => {
   try {
-    const allContacts = await Contact.find({}).sort({ favorites: -1, name: 1 });
+    const allContacts = await Contact.find({}).sort({ favorites: -1 });
     res.status(200).json({ allContacts });
   } catch (e) {
     next(e);
