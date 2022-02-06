@@ -14,12 +14,15 @@ const Login = () => {
   const onFinish = async (values) => {
     try {
       setSubmitting(true);
-      const { data } = await axios.post("http://localhost:4200/login", values);
+      const { data } = await axios.post(
+        'http://localhost:4200/login',
+        values
+      );
       setSubmitting(false);
       setData("user", data);
       dispatch({
         type: "LOGGED_IN_USER",
-        payload: data
+        payload: data,
       });
       toast.success(`Login successful! Welcome ${parseName(data.user.email)}`);
       setTimeout(() => navigate("/contacts"), 3000);

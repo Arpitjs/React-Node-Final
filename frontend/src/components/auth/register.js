@@ -11,7 +11,7 @@ const Register = () => {
     try {
       setSubmitting(true);
       await axios.post(
-        "http://localhost:4200/register",
+        'http://localhost:4200/register',
         values
       );
       setSubmitting(false);

@@ -1,10 +1,6 @@
 import { Form, Select, Input, Radio, Button, Upload } from "antd";
 import { InputNumber } from "antd";
-import {
-  MobileOutlined,
-  HomeOutlined,
-  BankOutlined
-} from "@ant-design/icons";
+import { MobileOutlined, HomeOutlined, BankOutlined } from "@ant-design/icons";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -16,17 +12,17 @@ const { Option } = Select;
 
 const wrapper = { margin: "50px 0px 0px 300px" };
 const info = { margin: "10px 0px 20px 300px" };
-const icons = { marginRight: '20px '};
-const contact = { margin: "10px 20px 20px 260px" };
+const icons = { display: "block", width: "35%" };
 
 const ContactForm = ({ slug, method, operation, validate }) => {
-
   const [authToken, setAuthToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [countries, setCountries] = useState([]);
-  const [mobile, setMobile] = useState('');
-  const [home, setHome] = useState('');
-  const [work, setWork] = useState('');
+  const [contactNumber, setContactNumber] = useState({
+    mobile: "",
+    work: "",
+    home: "",
+  });
 
   const navigate = useNavigate();
 
@@ -67,15 +63,15 @@ const ContactForm = ({ slug, method, operation, validate }) => {
     try {
       let url = "";
       method === "post"
-        ? (url = "http://localhost:4200/api/contact")
-        : (url = `http://localhost:4200/api/contact/${slug}`);
+        ? (url = process.env.REACT_APP_API)
+        : (url = `${process.env.REACT_APP_API}/${slug}`);
 
       if (authToken) {
         setSubmitting(true);
         await axios({
           method,
           url,
-          data: { ...values, mobile, work, home },
+          data: { ...values, ...contactNumber },
           headers: { Authorization: `Bearer ${authToken}` },
         });
 
@@ -167,11 +163,28 @@ const ContactForm = ({ slug, method, operation, validate }) => {
           </Radio.Group>
         </Form.Item>
 
-        <div style={{display: 'flex', marginBottom: '20px' }}>
-          <p style={contact}>Contact Numbers: </p>
-          <InputNumber addonBefore={<MobileOutlined />} style={icons} placeholder="Mobile Number" name="mobile" onChange={(val) => setMobile(val)}/>
-          <InputNumber addonBefore={<HomeOutlined />} style={icons} placeholder="Home Number" name="home" onChange={(val) => setHome(val)}/>
-          <InputNumber addonBefore={<BankOutlined />} style={icons} placeholder="Work Number" name="work" onChange={(val) => setWork(val)}/>
+        <div style={{ margin: "0px 0px 30px 280px" }}>
+          <InputNumber
+            addonBefore={<MobileOutlined />}
+            style={icons}
+            placeholder="Mobile Number"
+            name="mobile"
+            onChange={(val) => setContactNumber(prevState => ({ ...prevState, mobile: val }))}
+          />
+          <InputNumber
+            addonBefore={<HomeOutlined />}
+            style={icons}
+            placeholder="Home Number"
+            name="home"
+            onChange={(val) => setContactNumber(prevState => ({ ...prevState, home: val }))}
+          />
+          <InputNumber
+            addonBefore={<BankOutlined />}
+            style={icons}
+            placeholder="Work Number"
+            name="work"
+            onChange={(val) => setContactNumber(prevState => ({ ...prevState, work: val }))}
+          />
         </div>
 
         <Form.Item
@@ -184,7 +197,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             <Button icon={<UploadOutlined />}>Click to upload</Button>
           </Upload>
         </Form.Item>
-      
+
         <Form.Item
           wrapperCol={{
             span: 12,

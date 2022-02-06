@@ -12,37 +12,18 @@ import { toast } from "react-toastify";
 import { getData } from "../../utils/localStorage";
 import { useNavigate } from "react-router-dom";
 import options from "../../utils/options";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 const { EXPAND_COLUMN } = Table;
 
 const TableComponent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const favoritedContact = useSelector(state => state.favorite);
 
-  // const contactsFromState = useSelector((state) => state.contacts);
   const [authToken, setAuthToken] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [contacts, setContacts] = useState([]);
-  const [contactNumbers, setContactNumbers] = useState([]);
   const iconStyle = { fontSize: "120%" };
-
-  const columns2 = [
-    {
-      title: "mobile",
-      dataIndex: "mobile",
-      key: 'mobile'
-    },
-    {
-      title: "home",
-      dataIndex: "home",
-      key: 'home'
-    },
-    {
-      title: "work",
-      key: 'work',
-      dataIndex: "work",
-    },
-  ];
 
   useEffect(() => {
     const { token, user } = getData("user");
@@ -55,7 +36,7 @@ const TableComponent = () => {
     try {
       if (authToken) {
         const { data } = await axios.get(
-          "http://localhost:4200/api/contact",
+          process.env.REACT_APP_API,
           options(authToken)
         );
         dispatch({
@@ -63,11 +44,6 @@ const TableComponent = () => {
           payload: data.allContacts,
         });
         setContacts(data.allContacts);
-        const allContactsNumbers = data.allContacts.map(
-          (c) => c.contactNumber[0]
-        );
-        setContactNumbers(allContactsNumbers);
-        console.log("cpntact nums", contactNumbers);
         // setContacts(contactsFromState);
       }
     } catch (e) {
@@ -75,6 +51,24 @@ const TableComponent = () => {
       toast(e.response.data.err.msg);
     }
   };
+
+  const columns2 = [
+    {
+      title: "Mobile",
+      dataIndex: "mobile",
+      key: "mobile",
+    },
+    {
+      title: "Work",
+      dataIndex: "work",
+      key: "work",
+    },
+    {
+      title: "Home",
+      dataIndex: "home",
+      key: "home",
+    },
+  ];
 
   const columns = [
     {
@@ -106,10 +100,10 @@ const TableComponent = () => {
       key: "email",
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
+      title: "Contact Number",
+      dataIndex: ['contactNumber', '0', 'mobile'],
       align: "center",
-      key: "phone",
+      key: "mobile",
     },
     EXPAND_COLUMN,
     {
@@ -160,7 +154,7 @@ const TableComponent = () => {
     try {
       setContacts(contacts.filter((contact) => contact._id !== val._id));
       await axios.delete(
-        `http://localhost:4200/api/contact/${val.slug}`,
+        `${process.env.REACT_APP_API}/${val.slug}`,
         options(authToken)
       );
       toast.success("Contact deleted successfully.");
@@ -172,13 +166,18 @@ const TableComponent = () => {
 
   async function handleFavorite(val) {
     try {
+      dispatch({
+        type: 'FAV_CONTACT',
+        payload: val
+      })
+      console.log('favorited now?', favoritedContact);
       await axios.post(
-        "http://localhost:4200/api/contact/favorite-contact",
+        `${process.env.REACT_APP_API}/favorite-contact`,
         val,
         options(authToken)
       );
-      fetchData();
-      toast.success("you have favorited this contact.");
+      // fetchData();
+      toast.success(`you have favorited ${favoritedContact.name}'s contact.`);
     } catch (e) {
       console.log(e);
     }
@@ -187,7 +186,7 @@ const TableComponent = () => {
   async function handleUnfavorite(val) {
     try {
       await axios.post(
-        "http://localhost:4200/api/contact/unfavorite-contact",
+        `${process.env.REACT_APP_API}/unfavorite-contact`,
         val,
         options(authToken)
       );
@@ -205,14 +204,16 @@ const TableComponent = () => {
         columns={columns}
         dataSource={contacts}
         pagination={false}
-        rowKey={(contacts) => contacts._id}
+        bordered={true}
+        rowKey={contacts => contacts._id}
         expandable={{
-          expandedRowRender: () => (
+          expandedRowRender: (record) => (
             <Table
+              bordered={true}
               columns={columns2}
-              dataSource={contactNumbers}
-              size="small"
+              dataSource={record.contactNumber}
               pagination={false}
+              size="small"
             />
           ),
         }}

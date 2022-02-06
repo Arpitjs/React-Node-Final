@@ -7,7 +7,7 @@ import {
   editContact,
   deleteContact,
   favContact,
-  UnFavContact,
+  unFavContact,
 } from "../controllers/contactController";
 
 const router = new express.Router();
@@ -23,6 +23,6 @@ router.route("/:slug")
 .delete(deleteContact);
 
 router.post("/favorite-contact", favContact);
-router.post("/unfavorite-contact", UnFavContact);
+router.post("/unfavorite-contact", unFavContact);
 
 export default router;

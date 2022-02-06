@@ -12,6 +12,7 @@ export const getContacts = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
+  // console.log(req.body);
   try {
     const newContact = {};
 
@@ -96,7 +97,7 @@ export const favContact = async (req, res, next) => {
   }
 };
 
-export const UnFavContact = async (req, res, next) => {
+export const unFavContact = async (req, res, next) => {
   try {
     const { slug } = req.body;
     const contact = await Contact.findOneAndUpdate(
