@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@200&family=Supermercado+One&display=swap");
+
+.container {
+  position: relative;
+}
+
+.container img {
+  width: 100%;
+  height: auto;
+}
+
+.container .btn,
+.btn2 {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background-color: #385170;
+  color: white;
+  font-size: 16px;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  border-radius: 25px;
+}
+
+.container .btn:hover,
+.btn2:hover {
+  background-color: black;
+}
+
+.container .btn {
+  top: 62%;
+  left: 45%;
+}
+
+.container .btn2 {
+  top: 62%;
+  left: 55%;
+}
+.info {
+  font-family: "Bebas Neue", cursive;
+  font-family: "Mulish", sans-serif;
+  font-family: "Supermercado One", cursive;
+  position: absolute;
+  top: 30%;
+  left: 38%;
+}
+.info h1 {
+    color: #0f2b4e;
+}

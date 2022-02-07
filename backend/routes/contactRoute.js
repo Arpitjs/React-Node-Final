@@ -9,13 +9,15 @@ import {
   favContact,
   unFavContact,
 } from "../controllers/contactController";
+import { validateBody } from "../middlewares/validator";
+import { contactSchema } from "../utils/schema";
 
 const router = new express.Router();
 router.use(authenticate);
 
 router.route("/")
 .get(getContacts)
-.post(createContact);
+.post(validateBody(contactSchema), createContact);
 
 router.route("/:slug")
 .get(getContact)

@@ -1,4 +1,4 @@
-import ContactForm from "./contactForm";
+import ContactForm from "./ContactForm";
 import { useParams } from "react-router-dom";
 
 const EditContact = () => {

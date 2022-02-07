@@ -6,7 +6,7 @@ import {
   HeartOutlined,
   HeartFilled,
 } from "@ant-design/icons";
-import Nav from "../nav";
+import Nav from '../Nav';
 import axios from "axios";
 import { toast } from "react-toastify";
 import { getData } from "../../utils/localStorage";
@@ -16,27 +16,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { checkJWTValid } from "../../utils/newAccessToken";
 const { EXPAND_COLUMN } = Table;
 
-const TableComponent = () => {
+const ViewContacts = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const contactsFromRedux = useSelector(state => state.contacts);
+  // const contactsFromRedux = useSelector((state) => state.contacts);
+
+  const token = getData("token");
+  const refreshToken = getData("refreshToken");
+  const user = getData("user");
 
   const [authToken, setAuthToken] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [contacts, setContacts] = useState([]);
   const iconStyle = { fontSize: "120%" };
 
+  const tokenProcess = async (token, refreshToken) => {
+    const newAccessToken = await checkJWTValid(token, refreshToken);
+    newAccessToken ? setAuthToken(newAccessToken) : setAuthToken(token);
+  };
+
   useEffect(() => {
-    const token = getData("token");
-    const refreshToken = getData('refreshToken');
-    const user = getData("user");
-    const tokenProcess = async () => {
-      const newAccessToken = await checkJWTValid(token, refreshToken);
-      newAccessToken ? setAuthToken(newAccessToken) : setAuthToken(token);
-    }
     setCurrentUser(user);
     fetchData();
-    tokenProcess();
+    tokenProcess(token, refreshToken);
   }, [authToken]);
 
   const fetchData = async () => {
@@ -51,8 +53,7 @@ const TableComponent = () => {
           payload: data.allContacts,
         });
         setContacts(data.allContacts);
-        console.log('contacts in state', contactsFromRedux);
-        // setContacts(contactsFromState);
+        // setContacts(contactsFromRedux);
       }
     } catch (e) {
       console.log(e);
@@ -109,7 +110,7 @@ const TableComponent = () => {
     },
     {
       title: "Contact Number",
-      dataIndex: ['contactNumber', '0', 'mobile'],
+      dataIndex: ["contactNumber", "0", "mobile"],
       align: "center",
       key: "contact number",
     },
@@ -143,11 +144,11 @@ const TableComponent = () => {
       align: "center",
       key: "actions",
       render: (val) => (
-        <>
-          <DeleteOutlined
+       <>
+        <DeleteOutlined
             onClick={() => handleDelete(val)}
             style={{ ...iconStyle, marginRight: "30px" }}
-          />
+          /> 
 
           <EditOutlined
             onClick={() => navigate(`/edit/${val.slug}`)}
@@ -159,12 +160,14 @@ const TableComponent = () => {
   ];
 
   async function handleDelete(val) {
+    await tokenProcess(token, refreshToken);
     try {
       setContacts(contacts.filter((contact) => contact._id !== val._id));
       await axios.delete(
         `${process.env.REACT_APP_API}/${val.slug}`,
         options(authToken)
       );
+      fetchData();
       toast.success("Contact deleted successfully.");
     } catch (e) {
       console.log(e);
@@ -174,19 +177,22 @@ const TableComponent = () => {
 
   async function handleFavorite(val) {
     try {
+      await tokenProcess(token, refreshToken);
       await axios.post(
         `${process.env.REACT_APP_API}/favorite-contact`,
         val,
         options(authToken)
       );
       fetchData();
-      toast.success(`you have favorited ${val.name}'s contact.`);
+      toast.success(`you have favorited ${val.name}'s contact.`);     
     } catch (e) {
       console.log(e);
+      toast.error(e.response.data.err.msg);
     }
   }
 
   async function handleUnfavorite(val) {
+    await tokenProcess(token, refreshToken);
     try {
       await axios.post(
         `${process.env.REACT_APP_API}/unfavorite-contact`,
@@ -207,7 +213,7 @@ const TableComponent = () => {
         columns={columns}
         dataSource={contacts}
         pagination={false}
-        rowKey={contacts => contacts._id}
+        rowKey={(contacts) => contacts._id}
         expandable={{
           expandedRowRender: (record) => (
             <Table
@@ -216,7 +222,7 @@ const TableComponent = () => {
               pagination={false}
               size="small"
               dataSource={record.contactNumber}
-              rowKey={contacts => contacts._id}
+              rowKey={(contacts) => contacts._id}
             />
           ),
         }}
@@ -225,4 +231,4 @@ const TableComponent = () => {
   );
 };
 
-export default TableComponent;
+export default ViewContacts;

@@ -39,6 +39,9 @@ const contactSchema = new Schema({
         type: String,
         unique: true
     },
+    createdBy: {
+            type: ObjectId, ref: 'User'
+    },
     favorites: [
            {
            type: ObjectId, ref: 'User'

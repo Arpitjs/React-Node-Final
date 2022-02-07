@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import AuthForm from "./authForm";
+import AuthForm from "./AuthForm";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 

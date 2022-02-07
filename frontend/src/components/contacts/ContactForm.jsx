@@ -36,7 +36,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
     }
     tokenProcess();
     getAllCountries();
-  }, [authToken, countries]);
+  }, []);
 
   const getAllCountries = async () => {
     try {
@@ -71,7 +71,6 @@ const ContactForm = ({ slug, method, operation, validate }) => {
       method === "post"
         ? (url = process.env.REACT_APP_API)
         : (url = `${process.env.REACT_APP_API}/${slug}`);
-
       if (authToken) {
         setSubmitting(true);
         await axios({

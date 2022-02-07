@@ -4,7 +4,11 @@ import uploadImage from "../utils/uploadImage";
 
 export const getContacts = async (req, res, next) => {
   try {
-    const allContacts = await Contact.find({}).sort({ favorites: -1 });
+    const allContacts = await Contact.aggregate([
+      {
+        $sort: { favorites: -1, name: 1 },
+      },
+    ]);
     res.status(200).json({ allContacts });
   } catch (e) {
     next(e);
@@ -22,7 +26,7 @@ export const createContact = async (req, res, next) => {
       newContact.image = await uploadImage(iData);
     }
     mapContacts(newContact, req.body);
-
+    newContact.createdBy = req.user._id;
     const contact = await Contact.create(newContact);
     res.status(201).json({ contact });
   } catch (e) {

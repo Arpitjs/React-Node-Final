@@ -2,7 +2,7 @@ import * as jwt from "jsonwebtoken";
 import User from "../models/userModel";
 
 const signAccessToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "40s" });
+  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 const signRefreshToken = (id) =>
   jwt.sign({ id }, process.env.REFRESH_TOKEN, { expiresIn: "7d" });
 
@@ -11,6 +11,7 @@ export const authenticate = (req, res, next) => {
     return next({ msg: "User not authenticated." });
   }
   const token = req.headers.authorization.split(" ")[1];
+  // console.log('token recieved', token);
   jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
     if(err) return next({ err });
     const user = await User.findById(data.id);

@@ -22,7 +22,7 @@ const Nav = () => {
       removeData('user');
       removeData('token');
       removeData('refreshToken');
-      navigate('/login');
+      navigate('/');
   }
 
   return (

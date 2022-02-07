@@ -1,4 +1,4 @@
-import ContactForm from "./contactForm";
+import ContactForm from "./ContactForm";
 
 const CreateContact = () => <ContactForm method="post" operation="Add" validate={true} />;
 
