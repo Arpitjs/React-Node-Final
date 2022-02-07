@@ -1,2 +1,1 @@
 export const LIST_OF_CONTACTS = 'LIST_OF_CONTACTS';
-export const FAV_CONTACT = 'FAV_CONTACT';

@@ -19,7 +19,7 @@ const { EXPAND_COLUMN } = Table;
 const TableComponent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const favoritedContact = useSelector(state => state.favorite);
+  const contactsFromRedux = useSelector(state => state.contacts);
 
   const [authToken, setAuthToken] = useState("");
   const [currentUser, setCurrentUser] = useState({});
@@ -51,6 +51,7 @@ const TableComponent = () => {
           payload: data.allContacts,
         });
         setContacts(data.allContacts);
+        console.log('contacts in state', contactsFromRedux);
         // setContacts(contactsFromState);
       }
     } catch (e) {
@@ -110,7 +111,7 @@ const TableComponent = () => {
       title: "Contact Number",
       dataIndex: ['contactNumber', '0', 'mobile'],
       align: "center",
-      key: "mobile",
+      key: "contact number",
     },
     EXPAND_COLUMN,
     {
@@ -173,18 +174,13 @@ const TableComponent = () => {
 
   async function handleFavorite(val) {
     try {
-      dispatch({
-        type: 'FAV_CONTACT',
-        payload: val
-      })
-      console.log('favorited now?', favoritedContact);
       await axios.post(
         `${process.env.REACT_APP_API}/favorite-contact`,
         val,
         options(authToken)
       );
       fetchData();
-      toast.success(`you have favorited this contact.`);
+      toast.success(`you have favorited ${val.name}'s contact.`);
     } catch (e) {
       console.log(e);
     }
@@ -198,7 +194,7 @@ const TableComponent = () => {
         options(authToken)
       );
       fetchData();
-      toast.success("you have unfavorited this contact.");
+      toast.success(`you have unfavorited ${val.name}'s contact.`);
     } catch (e) {
       console.log(e);
     }
@@ -211,7 +207,6 @@ const TableComponent = () => {
         columns={columns}
         dataSource={contacts}
         pagination={false}
-        bordered={true}
         rowKey={contacts => contacts._id}
         expandable={{
           expandedRowRender: (record) => (

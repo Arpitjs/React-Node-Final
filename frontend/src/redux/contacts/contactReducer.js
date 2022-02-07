@@ -1,4 +1,4 @@
-import { FAV_CONTACT, LIST_OF_CONTACTS } from "./contactTypes";
+import { LIST_OF_CONTACTS } from "./contactTypes";
 
 export function contactReducer(state = null, action) {
     switch(action.type) {
@@ -8,11 +8,4 @@ export function contactReducer(state = null, action) {
     }
 }
 
-export function favoriteReducer(state = null, action) {
-    switch(action.type) {
-        case FAV_CONTACT:
-            return action.payload;
-        default: return state;
-    }
-}
 

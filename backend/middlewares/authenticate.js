@@ -12,11 +12,7 @@ export const authenticate = (req, res, next) => {
   }
   const token = req.headers.authorization.split(" ")[1];
   jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
-    if (err) {
-      return err.message === "jwt expired"
-        ? next({ msg: "Acess token has expired. " })
-        : next({ err });
-    }
+    if(err) return next({ err });
     const user = await User.findById(data.id);
     req.user = user;
     next();
