@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 const app = express();
 const morgan = require('morgan');
 
-import './db.js';
+import './db/db.js';
 // import './testdb.js';
 
 import userRoutes from './routes/userRoute';
@@ -26,7 +26,7 @@ app.use('/api/contact', contactRoutes);
 
 /* error handling middleware */
 app.use((err, req, res, next) => {
-    console.log(err);
+    console.log('err is>>>', err);
     res.status(400).json({ err });
 })
 

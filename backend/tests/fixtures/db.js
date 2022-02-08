@@ -14,9 +14,10 @@ let userTwoId = new mongoose.Types.ObjectId()
 
 let userTwo = {
     _id: userTwoId,
-    email: 'andrew@gmail.com',
+    email: 'arpited@gmail.com',
     password: 'helloworld',
 }
+
 const contactOne  = {
     _id = new mongoose.Types.ObjectId(),
     name: 'contact 1',
@@ -32,7 +33,6 @@ const contactTwo  = {
 }
 const contactThree  = {
     _id = new mongoose.Types.ObjectId(),
-    name: 'contact 3',
     address: 'patan',
     email: 'c3@yahoo.com' 
 }

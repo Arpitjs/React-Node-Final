@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { tokenProcess } from "../../utils/tokenProcess";
+import { useSelector } from "react-redux";
+import { toastErrors } from "../../utils/toastErrors";
 
 const { Option } = Select;
 
@@ -18,6 +20,8 @@ const ContactForm = ({ slug, method, operation, validate }) => {
   const [authToken, setAuthToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [countries, setCountries] = useState([]);
+  const [currentContact, setCurrentContact] = useState({});
+  const contactsFromRedux = useSelector((state) => state.contacts);
   const [contactNumber, setContactNumber] = useState({
     mobile: "",
     work: "",
@@ -28,6 +32,12 @@ const ContactForm = ({ slug, method, operation, validate }) => {
 
   useEffect(() => {
     getAllCountries();
+    if (contactsFromRedux) {
+      const toEditContact = contactsFromRedux.filter((c) =>
+        c.slug === slug ? true : false
+      );
+      setCurrentContact(toEditContact[0]);
+    }
   }, [authToken]);
 
   const getAllCountries = async () => {
@@ -64,21 +74,21 @@ const ContactForm = ({ slug, method, operation, validate }) => {
       method === "post"
         ? (url = process.env.REACT_APP_API)
         : (url = `${process.env.REACT_APP_API}/${slug}`);
-        setSubmitting(true);
-        await axios({
-          method,
-          url,
-          data: { ...values, ...contactNumber },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      setSubmitting(true);
+      await axios({
+        method,
+        url,
+        data: { ...values, ...contactNumber },
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        setSubmitting(false);
-        toast.success(`Your record has been ${operation.toLowerCase()}ed.`);
-        setTimeout(() => navigate("/contacts"), 3000);
+      setSubmitting(false);
+      toast.success(`Your record has been ${operation.toLowerCase()}ed.`);
+      setTimeout(() => navigate("/contacts"), 3000);
     } catch (e) {
       console.log(e);
       setSubmitting(false);
-      toast.error(e.response.data.err.msg);
+      toastErrors(e.response.data);
     }
   };
 
@@ -104,7 +114,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             },
           ]}
         >
-          <Input />
+          <Input placeholder={currentContact && currentContact.name} />
         </Form.Item>
         <Form.Item
           label="Email"
@@ -116,7 +126,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             },
           ]}
         >
-          <Input />
+          <Input placeholder={currentContact && currentContact.email} />
         </Form.Item>
 
         <Form.Item
@@ -130,7 +140,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
           ]}
           hasFeedback
         >
-          <Select placeholder="Please select a country">
+          <Select placeholder={currentContact && currentContact.country}>
             {countries.map((name) => (
               <Option key={Math.random() * 100} value={name}>
                 {name}
@@ -149,7 +159,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             },
           ]}
         >
-          <Input />
+          <Input placeholder={currentContact && currentContact.address} />
         </Form.Item>
         <Form.Item name="gender" label="Gender">
           <Radio.Group>
@@ -165,21 +175,27 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             style={icons}
             placeholder="Mobile Number"
             name="mobile"
-            onChange={(val) => setContactNumber(prevState => ({ ...prevState, mobile: val }))}
+            onChange={(val) =>
+              setContactNumber((prevState) => ({ ...prevState, mobile: val }))
+            }
           />
           <InputNumber
             addonBefore={<HomeOutlined />}
             style={icons}
             placeholder="Home Number"
             name="home"
-            onChange={(val) => setContactNumber(prevState => ({ ...prevState, home: val }))}
+            onChange={(val) =>
+              setContactNumber((prevState) => ({ ...prevState, home: val }))
+            }
           />
           <InputNumber
             addonBefore={<BankOutlined />}
             style={icons}
             placeholder="Work Number"
             name="work"
-            onChange={(val) => setContactNumber(prevState => ({ ...prevState, work: val }))}
+            onChange={(val) =>
+              setContactNumber((prevState) => ({ ...prevState, work: val }))
+            }
           />
         </div>
 

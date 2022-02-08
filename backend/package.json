@@ -9,11 +9,15 @@
     "dotenv": "^15.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.2",
-    "jest": "^27.5.0",
+    "jest": "^27.5.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.9",
     "morgan": "^1.10.0",
     "supertest": "^6.2.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.0",
+    "babel-jest": "^27.5.1"
   }
 }

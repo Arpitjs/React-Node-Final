@@ -4,6 +4,7 @@
  * @returns {*string} slug
  */
 export const slugify = name => {
-    const nameArr = name.toLowerCase().split(' ');
-    return `${nameArr[0]}-${nameArr[1]}`;
+   const nameArr = name.split(' ');
+   if(nameArr.length === 1) return nameArr[0];
+   return `${nameArr[0]}-${nameArr[1]}`;
 }

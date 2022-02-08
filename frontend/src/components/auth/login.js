@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setData } from "../../utils/localStorage";
 import { parseName } from "../../utils/parseName";
+import { toastErrors } from "../../utils/toastErrors";
 
 const Login = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -29,9 +30,8 @@ const Login = () => {
       toast.success(`Login successful! Welcome ${parseName(data.user.email)}`);
       setTimeout(() => navigate("/contacts"), 3000);
     } catch (e) {
-      console.log(e.response.data);
       setSubmitting(false);
-      toast.error(e.response.data.err.msg);
+      toastErrors(e.response.data);
     }
   };
 

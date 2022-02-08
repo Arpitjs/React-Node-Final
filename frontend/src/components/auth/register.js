@@ -3,28 +3,23 @@ import { toast } from "react-toastify";
 import AuthForm from "./AuthForm";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toastErrors } from "../../utils/toastErrors";
 
 const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const onFinish = async (values) => {
     try {
+      
       setSubmitting(true);
-      await axios.post(
-        'http://localhost:4200/register',
-        values
-      );
+      await axios.post("http://localhost:4200/register", values);
       setSubmitting(false);
-        toast.success(
-          `Register successful! Redirecting you to Login...`
-        );
-        setTimeout(() => {
-          navigate('/login');
-        }, 3000)
+      toast.success(`Register successful! Redirecting you to Login...`);
+      setTimeout(() => navigate("/login"), 3000);
+
     } catch (e) {
-      console.log(e.response.data);
       setSubmitting(false);
-      toast.error(e.response.data.err.msg);
+      toastErrors(e.response.data);
     }
   };
 

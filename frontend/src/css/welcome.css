@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@200&family=Supermercado+One&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@200&family=Supermercado+One&family=Titillium+Web:wght@200;400&display=swap');
 
 .container {
   position: relative;
@@ -13,7 +13,7 @@
 .btn2 {
   position: absolute;
   transform: translate(-50%, -50%);
-  background-color: #385170;
+  background-color: #703854;
   color: white;
   font-size: 16px;
   padding: 12px 24px;
@@ -37,9 +37,10 @@
   left: 42%;
 }
 .info {
-  font-family: "Bebas Neue", cursive;
-  font-family: "Mulish", sans-serif;
-  font-family: "Supermercado One", cursive;
+  font-family: 'Bebas Neue', cursive;
+  font-family: 'Mulish', sans-serif;
+  font-family: 'Supermercado One', cursive;
+  font-family: 'Titillium Web', sans-serif;
   position: absolute;
   top: 30%;
   left: 25%;

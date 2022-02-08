@@ -12,17 +12,16 @@ import { toast } from "react-toastify";
 import { getData } from "../../utils/localStorage";
 import { useNavigate } from "react-router-dom";
 import options from "../../utils/options";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { tokenProcess } from "../../utils/tokenProcess";
+import { toastErrors } from "../../utils/toastErrors";
 const { EXPAND_COLUMN } = Table;
 
 const ViewContacts = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const contactsFromRedux = useSelector((state) => state.contacts);
 
   const user = getData("user");
-
   const [authToken, setAuthToken] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [contacts, setContacts] = useState([]);
@@ -39,21 +38,23 @@ const ViewContacts = () => {
       if (authToken) {
         const { data } = await axios.get(
           process.env.REACT_APP_API,
-          options(token)
+          token ? options(token) : options(getData('token'))
         );
         dispatch({
           type: "LIST_OF_CONTACTS",
           payload: data.allContacts,
         });
-        const exists = data.allContacts.filter(c => c.favorites.includes(user._id) ? true : false);
 
-        const doesntExist = data.allContacts.filter(c => !c.favorites.includes(user._id) ? true : false);
-
+        const exists = data.allContacts.filter((c) =>
+          c.favorites.includes(user._id) ? true : false
+        );
+        const doesntExist = data.allContacts.filter((c) =>
+          !c.favorites.includes(user._id) ? true : false
+        );
         setContacts([...exists, ...doesntExist]);
       }
     } catch (e) {
-      console.log(e);
-      toast(e.response.data.err.msg);
+      toastErrors(e.response.data);
     }
   };
 
@@ -169,8 +170,7 @@ const ViewContacts = () => {
       fetchData();
       toast.success("Contact deleted successfully.");
     } catch (e) {
-      console.log(e);
-      toast.error(e.response.data.err.msg);
+      toastErrors(e.response.data);
     }
   }
 
@@ -185,8 +185,7 @@ const ViewContacts = () => {
       fetchData();
       toast.success(`you have favorited ${val.name}'s contact.`);
     } catch (e) {
-      console.log(e);
-      toast.error(e.response.data.err.msg);
+      toastErrors(e.response.data);
     }
   }
 
@@ -201,7 +200,7 @@ const ViewContacts = () => {
       fetchData();
       toast.success(`you have unfavorited ${val.name}'s contact.`);
     } catch (e) {
-      console.log(e);
+      toastErrors(e.response.data);
     }
   }
 
@@ -212,6 +211,7 @@ const ViewContacts = () => {
         columns={columns}
         dataSource={contacts}
         pagination={false}
+        bordered={true}
         rowKey={(contacts) => contacts._id}
         expandable={{
           expandedRowRender: (record) => (

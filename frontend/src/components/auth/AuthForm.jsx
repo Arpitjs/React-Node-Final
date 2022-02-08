@@ -1,10 +1,12 @@
 import { Form, Input, Button, Checkbox } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm = ({ onFinish, onFinishFailed, operation, submitting }) => {
+  const navigate = useNavigate();
   const info = {
     display: "flex",
     justifyContent: "center",
-    margin: "50px 0px"
+    margin: "50px 0px",
   };
 
   return (
@@ -71,11 +73,17 @@ const AuthForm = ({ onFinish, onFinishFailed, operation, submitting }) => {
           }}
         >
           <Button type="primary" htmlType="submit">
-            { submitting ? 'Submitting' : 'Submit' }
+            {submitting ? "Submitting" : "Submit"}
           </Button>
         </Form.Item>
-        
       </Form>
+      <Button
+        type="link"
+        onClick={() => navigate("/")}
+        style={{ position: "absolute", top: "400px", left: "300px" }}
+      >
+        Go Back
+      </Button>
     </>
   );
 };

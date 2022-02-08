@@ -16,13 +16,11 @@ export const getContacts = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
-  // console.log(req.body);
   try {
     const newContact = {};
 
-    let iData;
     if (req.body.image && req.body.image.length) {
-      iData = req.body.image[0].thumbUrl;
+      let iData = req.body.image[0].thumbUrl;
       newContact.image = await uploadImage(iData);
     }
     mapContacts(newContact, req.body);
@@ -45,32 +43,27 @@ export const getContact = async (req, res, next) => {
 };
 
 export const editContact = async (req, res, next) => {
-  try {
-    const { slug } = req.params;
-    const { mobile, work, home } = req.body;
-    const contact = await Contact.findOne({ slug });
-    if (!contact)
-      return res.status(400).json({ msg: "No such contact found." });
-    const toEdit = {};
-    if (req.body.image) {
-      let iData = req.body.image[0].thumbUrl;
-      toEdit.image = await uploadImage(iData);
-    }
-    mapContacts(toEdit, req.body);
-    delete toEdit.contactNumber;
-
-    Contact.findOneAndUpdate({ slug }, toEdit, { new: true }).then(
-      async (doc) => {
-        if (mobile) doc.contactNumber[0].mobile = mobile;
-        if (home) doc.contactNumber[0].home = home;
-        if (work) doc.contactNumber[0].work = work;
-        await doc.save();
-        res.status(200).json({ doc });
-      }
-    );
-  } catch (e) {
-    next(e);
+  const { slug } = req.params;
+  const { mobile, work, home } = req.body;
+  const contact = await Contact.findOne({ slug });
+  if (!contact) return res.status(400).json({ msg: "No such contact found." });
+  const toEdit = {};
+  if (req.body.image) {
+    let iData = req.body.image[0].thumbUrl;
+    toEdit.image = await uploadImage(iData);
   }
+  mapContacts(toEdit, req.body);
+  delete toEdit.contactNumber;
+
+  Contact.findOneAndUpdate({ slug }, toEdit, { new: true })
+    .then(async (doc) => {
+      if (mobile) doc.contactNumber[0].mobile = mobile;
+      if (home) doc.contactNumber[0].home = home;
+      if (work) doc.contactNumber[0].work = work;
+      await doc.save();
+      res.status(200).json({ doc });
+    })
+    .catch((err) => next(err));
 };
 
 export const deleteContact = async (req, res, next) => {
