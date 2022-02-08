@@ -6,8 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { getData } from "../../utils/localStorage";
-import { checkJWTValid } from "../../utils/newAccessToken";
+import { tokenProcess } from "../../utils/tokenProcess";
 
 const { Option } = Select;
 
@@ -28,15 +27,8 @@ const ContactForm = ({ slug, method, operation, validate }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = getData("token");
-    const refreshToken = getData('refreshToken');
-    const tokenProcess = async () => {
-      const newAccessToken = await checkJWTValid(token, refreshToken);
-      newAccessToken ? setAuthToken(newAccessToken) : setAuthToken(token);
-    }
-    tokenProcess();
     getAllCountries();
-  }, []);
+  }, [authToken]);
 
   const getAllCountries = async () => {
     try {
@@ -66,24 +58,23 @@ const ContactForm = ({ slug, method, operation, validate }) => {
   };
 
   const onFinish = async (values) => {
+    const token = await tokenProcess(setAuthToken);
     try {
       let url = "";
       method === "post"
         ? (url = process.env.REACT_APP_API)
         : (url = `${process.env.REACT_APP_API}/${slug}`);
-      if (authToken) {
         setSubmitting(true);
         await axios({
           method,
           url,
           data: { ...values, ...contactNumber },
-          headers: { Authorization: `Bearer ${authToken}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         setSubmitting(false);
         toast.success(`Your record has been ${operation.toLowerCase()}ed.`);
         setTimeout(() => navigate("/contacts"), 3000);
-      }
     } catch (e) {
       console.log(e);
       setSubmitting(false);

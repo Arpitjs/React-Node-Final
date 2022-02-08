@@ -6,7 +6,7 @@ const Welcome = () => {
     return (
         <div className="container">
         <div className="info">
-        <h1>Welcome to Contact App</h1>
+        <h1>Welcome to Contact Manager App</h1>
         <h1>Please Login or Register to continue </h1>
         </div>
         <img src={process.env.PUBLIC_URL + '/images/bg2.jpg'} alt="welcome" />

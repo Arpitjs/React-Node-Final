@@ -2,7 +2,7 @@ import * as jwt from "jsonwebtoken";
 import User from "../models/userModel";
 
 const signAccessToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "20s" });
 const signRefreshToken = (id) =>
   jwt.sign({ id }, process.env.REFRESH_TOKEN, { expiresIn: "7d" });
 
@@ -23,7 +23,7 @@ export const authenticate = (req, res, next) => {
 export const checkJWTValid = (req, res) => {
   const { token }  = req.body;
   jwt.verify(token, process.env.JWT_SECRET, err => {
-    if(err && err.message === "jwt expired") return res.status(200).json({ msg: "jwt expired. "}) 
+    if(err && err.message === "jwt expired") return res.status(200).json({ msg: err.message }) 
     res.status(200).json({ msg: 'ok' });
   });
 }
