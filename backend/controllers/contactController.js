@@ -49,8 +49,12 @@ export const editContact = async (req, res, next) => {
   if (!contact) return res.status(400).json({ msg: "No such contact found." });
   const toEdit = {};
   if (req.body.image) {
+    try {
     let iData = req.body.image[0].thumbUrl;
     toEdit.image = await uploadImage(iData);
+    } catch (e) {
+      return next(e);
+    }
   }
   mapContacts(toEdit, req.body);
   delete toEdit.contactNumber;

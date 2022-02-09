@@ -11,11 +11,12 @@ export const authenticate = (req, res, next) => {
     return next({ msg: "User not authenticated." });
   }
   const token = req.headers.authorization.split(" ")[1];
-  // console.log('token recieved', token);
+  console.log('token recieved', token);
   jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
     if(err) return next({ err });
     const user = await User.findById(data.id);
     req.user = user;
+    console.log('current user', user.email);
     next();
   });
 };

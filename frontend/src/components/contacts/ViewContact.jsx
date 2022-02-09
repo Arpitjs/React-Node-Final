@@ -19,8 +19,8 @@ const { EXPAND_COLUMN } = Table;
 
 const ViewContacts = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
+  const dispatch = useDispatch(); 
+  
   const user = getData("user");
   const [authToken, setAuthToken] = useState("");
   const [currentUser, setCurrentUser] = useState({});
@@ -38,7 +38,7 @@ const ViewContacts = () => {
       if (authToken) {
         const { data } = await axios.get(
           process.env.REACT_APP_API,
-          token ? options(token) : options(getData('token'))
+         options(token)
         );
         dispatch({
           type: "LIST_OF_CONTACTS",
@@ -101,7 +101,7 @@ const ViewContacts = () => {
     {
       title: "Email",
       dataIndex: "email",
-      width: "15px",
+      width: '1%',
       align: "center",
       key: "email",
     },
@@ -116,7 +116,14 @@ const ViewContacts = () => {
       title: "Address",
       dataIndex: "address",
       align: "center",
+      width: '10%',
       key: "address",
+    },
+    {
+      title: "Country",
+      dataIndex: "country",
+      align: "center",
+      key: "country",
     },
     {
       title: "Favorite",
@@ -126,7 +133,7 @@ const ViewContacts = () => {
         val.favorites.includes(currentUser._id) ? (
           <HeartFilled
             onClick={() => handleUnfavorite(val)}
-            style={iconStyle}
+            style={{ ...iconStyle, color: "#e75480" }}
           />
         ) : (
           <HeartOutlined
@@ -142,19 +149,15 @@ const ViewContacts = () => {
       key: "actions",
       render: (val) => (
         <>
-          {val.createdBy === user._id && (
             <DeleteOutlined
               onClick={() => handleDelete(val)}
               style={{ ...iconStyle, marginRight: "30px" }}
             />
-          )}
 
-          {val.createdBy === user._id && (
             <EditOutlined
               onClick={() => navigate(`/edit/${val.slug}`)}
               style={iconStyle}
             />
-          )}
         </>
       ),
     },
@@ -211,7 +214,6 @@ const ViewContacts = () => {
         columns={columns}
         dataSource={contacts}
         pagination={false}
-        bordered={true}
         rowKey={(contacts) => contacts._id}
         expandable={{
           expandedRowRender: (record) => (

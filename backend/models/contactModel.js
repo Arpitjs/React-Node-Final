@@ -14,7 +14,7 @@ const contactSchema = new Schema(
   {
     name: {
       type: String,
-      trim: true
+      trim: true,
     },
     image: {
       url: String,
@@ -30,7 +30,6 @@ const contactSchema = new Schema(
     },
     address: {
       type: String,
-      trim: true,
     },
     gender: {
       type: String,

@@ -140,10 +140,16 @@ const ContactForm = ({ slug, method, operation, validate }) => {
           ]}
           hasFeedback
         >
-          <Select placeholder={currentContact && currentContact.country}>
-            {countries.map((name) => (
-              <Option key={Math.random() * 100} value={name}>
-                {name}
+          <Select
+            placeholder={
+              currentContact
+                ? currentContact.country
+                : "Please select a country!"
+            }
+          >
+            {countries.map((country) => (
+              <Option key={country} value={country}>
+                {country}
               </Option>
             ))}
           </Select>
