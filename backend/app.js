@@ -26,7 +26,7 @@ app.use('/api/contact', contactRoutes);
 
 /* error handling middleware */
 app.use((err, req, res, next) => {
-    console.log('err is>>>', err);
+    // console.log('err is>>>', err);
     res.status(400).json({ err });
 })
 

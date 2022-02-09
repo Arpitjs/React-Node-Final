@@ -6,9 +6,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { tokenProcess } from "../../utils/tokenProcess";
+// import { tokenProcess } from "../../utils/tokenProcess";
 import { useSelector } from "react-redux";
 import { toastErrors } from "../../utils/toastErrors";
+import { getData } from "../../utils/localStorage";
 
 const { Option } = Select;
 
@@ -17,7 +18,6 @@ const info = { margin: "10px 0px 20px 300px" };
 const icons = { display: "block", width: "35%" };
 
 const ContactForm = ({ slug, method, operation, validate }) => {
-  const [authToken, setAuthToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [countries, setCountries] = useState([]);
   const [currentContact, setCurrentContact] = useState({});
@@ -38,7 +38,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
       );
       setCurrentContact(toEditContact[0]);
     }
-  }, [authToken]);
+  }, []);
 
   const getAllCountries = async () => {
     try {
@@ -46,7 +46,6 @@ const ContactForm = ({ slug, method, operation, validate }) => {
       const allCountries = data.map((c) => c.name.common);
       setCountries(allCountries.sort());
     } catch (e) {
-      console.log(e);
     }
   };
 
@@ -68,7 +67,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
   };
 
   const onFinish = async (values) => {
-    const token = await tokenProcess(setAuthToken);
+    // const token = await tokenProcess(setAuthToken);
     try {
       let url = "";
       method === "post"
@@ -79,14 +78,13 @@ const ContactForm = ({ slug, method, operation, validate }) => {
         method,
         url,
         data: { ...values, ...contactNumber },
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${getData('token')}` },
       });
 
       setSubmitting(false);
       toast.success(`Your record has been ${operation.toLowerCase()}ed.`);
       setTimeout(() => navigate("/contacts"), 3000);
     } catch (e) {
-      console.log(e);
       setSubmitting(false);
       toastErrors(e.response.data);
     }
@@ -107,6 +105,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
         <Form.Item
           label="Name"
           name="name"
+          autocomplete="off"
           rules={[
             {
               required: validate ? true : false,
