@@ -26,8 +26,10 @@ app.use('/api/contact', contactRoutes);
 
 /* error handling middleware */
 app.use((err, req, res, next) => {
-    // console.log('err is>>>', err);
-    res.status(400).json({ err });
+    console.log('err is>>>', err);
+    let statusCode;
+    err.code ? statusCode = err.code : statusCode = 400;
+    res.status(statusCode).json({ err });
 })
 
 app.listen(PORT, () => console.log(`Server is listening at port ${PORT}`));

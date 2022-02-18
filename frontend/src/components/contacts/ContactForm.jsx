@@ -2,14 +2,13 @@ import { Form, Select, Input, Radio, Button, Upload } from "antd";
 import { InputNumber } from "antd";
 import { MobileOutlined, HomeOutlined, BankOutlined } from "@ant-design/icons";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-// import { tokenProcess } from "../../utils/tokenProcess";
 import { useSelector } from "react-redux";
 import { toastErrors } from "../../utils/toastErrors";
-import { getData } from "../../utils/localStorage";
+import axios from 'axios';
+import axiosConfigurations from '../../utils/axios';
 
 const { Option } = Select;
 
@@ -27,10 +26,10 @@ const ContactForm = ({ slug, method, operation, validate }) => {
     work: "",
     home: "",
   });
-
   const navigate = useNavigate();
 
   useEffect(() => {
+    axiosConfigurations();
     getAllCountries();
     if (contactsFromRedux) {
       const toEditContact = contactsFromRedux.filter((c) =>
@@ -67,7 +66,6 @@ const ContactForm = ({ slug, method, operation, validate }) => {
   };
 
   const onFinish = async (values) => {
-    // const token = await tokenProcess(setAuthToken);
     try {
       let url = "";
       method === "post"
@@ -77,8 +75,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
       await axios({
         method,
         url,
-        data: { ...values, ...contactNumber },
-        headers: { Authorization: `Bearer ${getData('token')}` },
+        data: { ...values, ...contactNumber }
       });
 
       setSubmitting(false);
@@ -97,15 +94,10 @@ const ContactForm = ({ slug, method, operation, validate }) => {
         name="validate_other"
         {...formItemLayout}
         onFinish={onFinish}
-        initialValues={{
-          "input-number": 3,
-          "checkbox-group": ["A", "B"],
-        }}
       >
         <Form.Item
           label="Name"
           name="name"
-          autocomplete="off"
           rules={[
             {
               required: validate ? true : false,
@@ -113,7 +105,7 @@ const ContactForm = ({ slug, method, operation, validate }) => {
             },
           ]}
         >
-          <Input placeholder={currentContact && currentContact.name} />
+          <Input name="name"/>
         </Form.Item>
         <Form.Item
           label="Email"

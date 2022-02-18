@@ -11,45 +11,42 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { getData } from "../../utils/localStorage";
 import { useNavigate } from "react-router-dom";
-import options from "../../utils/options";
 import { useDispatch } from "react-redux";
-// import { tokenProcess } from "../../utils/tokenProcess";
 import { toastErrors } from "../../utils/toastErrors";
+import axiosConfigurations from '../../utils/axios';
+
 const { EXPAND_COLUMN } = Table;
 
 const ViewContacts = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
-  
+  const dispatch = useDispatch();
+
   const user = getData("user");
   const [currentUser, setCurrentUser] = useState({});
   const [contacts, setContacts] = useState([]);
   const iconStyle = { fontSize: "120%" };
 
   useEffect(() => {
+    axiosConfigurations();
     setCurrentUser(user);
     fetchData();
   }, []);
 
   const fetchData = async () => {
-    // const token = await tokenProcess(setAuthToken);
     try {
-        const { data } = await axios.get(
-          process.env.REACT_APP_API,
-         options(getData('token'))
-        );
-        dispatch({
-          type: "LIST_OF_CONTACTS",
-          payload: data.allContacts,
-        });
+      const { data } = await axios.get(process.env.REACT_APP_API);
+      dispatch({
+        type: "LIST_OF_CONTACTS",
+        payload: data.allContacts,
+      });
 
-        const exists = data.allContacts.filter((c) =>
-          c.favorites.includes(user._id) ? true : false
-        );
-        const doesntExist = data.allContacts.filter((c) =>
-          !c.favorites.includes(user._id) ? true : false
-        );
-        setContacts([...exists, ...doesntExist]);
+      const exists = data.allContacts.filter((c) =>
+        c.favorites.includes(user._id) ? true : false
+      );
+      const doesntExist = data.allContacts.filter((c) =>
+        !c.favorites.includes(user._id) ? true : false
+      );
+      setContacts([...exists, ...doesntExist]);
     } catch (e) {
       toastErrors(e.response.data);
     }
@@ -98,7 +95,7 @@ const ViewContacts = () => {
     {
       title: "Email",
       dataIndex: "email",
-      width: '1%',
+      width: "1%",
       align: "center",
       key: "email",
     },
@@ -113,7 +110,7 @@ const ViewContacts = () => {
       title: "Address",
       dataIndex: "address",
       align: "center",
-      width: '10%',
+      width: "10%",
       key: "address",
     },
     {
@@ -146,15 +143,15 @@ const ViewContacts = () => {
       key: "actions",
       render: (val) => (
         <>
-            <DeleteOutlined
-              onClick={() => handleDelete(val)}
-              style={{ ...iconStyle, marginRight: "30px" }}
-            />
+          <DeleteOutlined
+            onClick={() => handleDelete(val)}
+            style={{ ...iconStyle, marginRight: "30px" }}
+          />
 
-            <EditOutlined
-              onClick={() => navigate(`/edit/${val.slug}`)}
-              style={iconStyle}
-            />
+          <EditOutlined
+            onClick={() => navigate(`/edit/${val.slug}`)}
+            style={iconStyle}
+          />
         </>
       ),
     },
@@ -162,10 +159,7 @@ const ViewContacts = () => {
 
   async function handleDelete(val) {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API}/${val.slug}`,
-        options(getData('token'))
-      );
+      await axios.delete(`${process.env.REACT_APP_API}/${val.slug}`);
       fetchData();
       toast.success("Contact deleted successfully.");
     } catch (e) {
@@ -175,11 +169,7 @@ const ViewContacts = () => {
 
   async function handleFavorite(val) {
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API}/favorite-contact`,
-        val,
-        options(getData('token'))
-      );
+      await axios.post(`${process.env.REACT_APP_API}/favorite-contact`, val);
       fetchData();
       toast.success(`you have favorited ${val.name}'s contact.`);
     } catch (e) {
@@ -189,11 +179,7 @@ const ViewContacts = () => {
 
   async function handleUnfavorite(val) {
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API}/unfavorite-contact`,
-        val,
-        options(getData('token'))
-      );
+      await axios.post(`${process.env.REACT_APP_API}/unfavorite-contact`, val);
       fetchData();
       toast.success(`you have unfavorited ${val.name}'s contact.`);
     } catch (e) {

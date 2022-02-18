@@ -31,6 +31,7 @@ const Login = () => {
       setTimeout(() => navigate("/contacts"), 3000);
     } catch (e) {
       setSubmitting(false);
+      console.log(e);
       toastErrors(e.response.data);
     }
   };

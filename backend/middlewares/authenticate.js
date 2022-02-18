@@ -11,23 +11,16 @@ export const authenticate = (req, res, next) => {
     return next({ msg: "User not authenticated." });
   }
   const token = req.headers.authorization.split(" ")[1];
-  // console.log('token recieved', token);
   jwt.verify(token, process.env.JWT_SECRET, async (err, data) => {
-    if(err) return next({ err });
-    const user = await User.findById(data.id);
-    req.user = user;
-    // console.log('current user', user.email);
-    next();
+    if (err) {
+      err.message === "jwt expired" ? next({ code: 403, msg: err.message }) : next({ err });
+    } else {
+      const user = await User.findById(data.id);
+      req.user = user;
+      next();
+    }
   });
 };
-
-export const checkJWTValid = (req, res) => {
-  const { token }  = req.body;
-  jwt.verify(token, process.env.JWT_SECRET, err => {
-    if(err && err.message === "jwt expired") return res.status(200).json({ msg: err.message }) 
-    res.status(200).json({ msg: 'ok' });
-  });
-}
 
 export const renewAccessToken = (req, res, next) => {
   const refreshToken = req.body.token;
