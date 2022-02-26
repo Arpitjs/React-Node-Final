@@ -12,10 +12,12 @@ import CreateContact from "./components/contacts/createContact";
 import PageNotFound from "./components/404";
 import Auth from "./components/routes";
 import Welcome from './components/Welcome';
+import { UserProvider } from "./context";
 
 function App() {
   return (
     <div>
+      <UserProvider>
       <Provider store={store}>
         <ToastContainer />
         <BrowserRouter>
@@ -35,6 +37,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </Provider>
+      </UserProvider>
     </div>
   );
 }

@@ -6,7 +6,6 @@ const app = express();
 const morgan = require('morgan');
 
 import './db/db.js';
-// import './testdb.js';
 
 import userRoutes from './routes/userRoute';
 import contactRoutes from './routes/contactRoute';
@@ -22,7 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', userRoutes);
 app.use('/api/contact', contactRoutes);
-
 
 /* error handling middleware */
 app.use((err, req, res, next) => {

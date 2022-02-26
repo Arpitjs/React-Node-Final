@@ -1,5 +1,5 @@
 import { Table } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -13,11 +13,13 @@ import { getData } from "../../utils/localStorage";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toastErrors } from "../../utils/toastErrors";
-import axiosConfigurations from '../../utils/axios';
+// import axiosConfigurations from '../../utils/axios';
+import { UserContext } from "../../context";
 
 const { EXPAND_COLUMN } = Table;
 
 const ViewContacts = () => {
+  let [state, setState] = useContext(UserContext)
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -27,7 +29,6 @@ const ViewContacts = () => {
   const iconStyle = { fontSize: "120%" };
 
   useEffect(() => {
-    axiosConfigurations();
     setCurrentUser(user);
     fetchData();
   }, []);
